@@ -1,0 +1,32 @@
+{
+  "name": "azure-table-mapper",
+  "version": "0.0.1",
+  "description": "A simple helper which maps JSON object ready for storage in Azure Table Storage",
+  "main": "index.js",
+  "scripts": {
+    "test": "istanbul cover --include-all-sources ./node_modules/jasmine/bin/jasmine.js -x **/spec/** && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bense4ger/azure-table-mapper.git"
+  },
+  "keywords": [
+    "azure",
+    "table-storage",
+    "mapping"
+  ],
+  "author": "Ben Seager",
+  "license": "GNU V2",
+  "bugs": {
+    "url": "https://github.com/bense4ger/azure-table-mapper/issues"
+  },
+  "homepage": "https://github.com/bense4ger/azure-table-mapper",
+  "devDependencies": {
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.13",
+    "jasmine": "^2.3.1"
+  },
+  "dependencies": {
+    "azure-storage": "^0.4.3"
+  }
+}
