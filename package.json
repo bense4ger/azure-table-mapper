@@ -1,6 +1,6 @@
 {
   "name": "azure-table-mapper",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A simple helper which maps objects ready for storage in Azure Table Storage",
   "main": "index.js",
   "scripts": {
