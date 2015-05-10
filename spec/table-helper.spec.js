@@ -2,6 +2,7 @@
  * Created by benseager on 06/05/2015.
  */
 var helper = require('../lib/table-helper');
+var entGen = require('azure-storage').TableUtilities.entityGenerator;
 
 describe('helper.convertToTableEntity', function(){
     var _entity, _tableEntity;
@@ -9,9 +10,10 @@ describe('helper.convertToTableEntity', function(){
         _entity = {
             id : 1234,
             name : 'test',
-            date : new Date(2015, 1, 1),
+            date : new Date(2015, 0, 1),
             bool : true,
             object: {value : 'someValue'},
+            double: 123.45,
             entityMapping: {
                 partitionKey : 'id',
                 rowKey : {
@@ -33,6 +35,7 @@ describe('helper.convertToTableEntity', function(){
         expect(_tableEntity.date._).toEqual(_entity.date);
         expect(_tableEntity.bool._).toEqual(_entity.bool);
         expect(_tableEntity.object._).toEqual(_entity.object);
+        expect(_tableEntity.double._).toEqual(_entity.double);
     });
     it('should correctly map the object keys that are dates', function(){
         expect(_tableEntity.date.$).toEqual('Edm.DateTime');
@@ -51,7 +54,7 @@ describe('helper.convertToTableEntity - preserving keys' , function(){
         _entity = {
             id : 1234,
             name : 'test',
-            date : new Date(2015, 1, 1),
+            date : new Date(2015, 0, 1),
             entityMapping: {
                 partitionKey : 'id',
                 rowKey : {
@@ -77,7 +80,7 @@ describe('helper.convertToTableEntity - default preserving keys', function(){
         _entity = {
             id : 1234,
             name : 'test',
-            date : new Date(2015, 1, 1),
+            date : new Date(2015, 0, 1),
             entityMapping: {
                 partitionKey : 'id',
                 rowKey : {
@@ -103,7 +106,7 @@ describe('helper.convertToTableEntity - do not preserve keys', function(){
         _entity = {
             id : 1234,
             name : 'test',
-            date : new Date(2015, 1, 1),
+            date : new Date(2015, 0, 1),
             entityMapping: {
                 partitionKey : 'id',
                 rowKey : {
@@ -125,6 +128,117 @@ describe('helper.convertToTableEntity - do not preserve keys', function(){
 
 describe('helper.convertFromTableEntity', function(){
     var _entity, _tableEntity;
-    beforeAll(function(){});
-    it('should correctly map the object keys and their types', function(){});
+    beforeAll(function(){
+        var _obj = {value : 'someValue'};
+        _tableEntity = {
+            PartitionKey : entGen.Int32(1234),
+            RowKey : entGen.String('test_rk'),
+            id : entGen.Int32(1234),
+            name : entGen.String('test'),
+            date : entGen.DateTime(new Date(2015, 0, 1)),
+            bool : entGen.Boolean(true),
+            object : entGen.String(JSON.stringify(_obj)),
+            int64 : entGen.Int64(9999)
+        };
+
+        var _entityMapping = {
+            partitionKey : 'id',
+            rowKey : {
+                identifier : ['name'],
+                format : '{name}_rk'
+            }
+        };
+        _entity = helper.convertFromTableEntity(_tableEntity, _entityMapping);
+    });
+    it('should correctly map the object keys and their types', function(){
+        expect(_entity.date).toEqual(_tableEntity.date._);
+        expect(_entity.bool).toEqual(_tableEntity.bool._);
+        expect(_entity.object).toEqual(JSON.parse(_tableEntity.object._));
+        expect(_entity.int64).toEqual(_tableEntity.int64._);
+    });
+});
+describe('helper.convertFromTableEntity - key mapping where keys are present', function(){
+    var _entity, _tableEntity;
+    beforeAll(function(){
+        var _obj = {value : 'someValue'};
+        _tableEntity = {
+            PartitionKey : entGen.Int32(1234),
+            RowKey : entGen.String('test_rk'),
+            id : entGen.Int32(1234),
+            name : entGen.String('test'),
+            date : entGen.DateTime(new Date(2015, 0, 1)),
+            bool : entGen.Boolean(true),
+            object : entGen.String(JSON.stringify(_obj))
+        };
+
+        var _entityMapping = {
+            paritionKey : 'id',
+            rowKey : {
+                identifier : ['name'],
+                format : '{name}_rk'
+            }
+        };
+
+        _entity = helper.convertFromTableEntity(_tableEntity, _entityMapping);
+    });
+    it('should not map the row and partition keys if the original keys are present', function(){
+        expect(_entity.id).toBeDefined();
+        expect(_entity.name).toBeDefined();
+    });
+});
+describe('helper.convertFromTableEntity - key mapping where keys are not present', function(){
+    var _entity, _tableEntity;
+    beforeAll(function(){
+        var _obj = {value : 'someValue'};
+        _tableEntity = {
+            PartitionKey : entGen.Int32(1234),
+            RowKey : entGen.String('test_rk'),
+            date : entGen.DateTime(new Date(2015, 0, 1)),
+            bool : entGen.Boolean(true),
+            object : entGen.String(JSON.stringify(_obj))
+        };
+
+        var _entityMapping = {
+            partitionKey : 'id',
+            rowKey : {
+                identifier : ['name'],
+                format : '{name}_rk'
+            }
+        };
+
+        _entity = helper.convertFromTableEntity(_tableEntity, _entityMapping);
+    });
+    it('should map the partition key', function(){
+        expect(_entity.id).toEqual(_tableEntity.PartitionKey._);
+    });
+    it('should map the row key', function(){
+        expect(_entity.name).toEqual('test');
+    });
+});
+
+describe('helper to and from conversion', function(){
+    var _entity, _tableEntity, _result;
+    beforeAll(function(){
+        _entity = {
+            id : 1234,
+            name : 'test',
+            date : new Date(2015, 0, 1),
+            bool : true,
+            object: {value : 'someValue'},
+            double: 123.45,
+            entityMapping: {
+                partitionKey : 'id',
+                rowKey : {
+                    identifier : ['name'],
+                    format : '{name}_rk'
+                }
+            }
+        };
+
+        _tableEntity = helper.convertToTableEntity(_entity, false);
+        _result = helper.convertFromTableEntity(_tableEntity, _entity.entityMapping);
+    });
+    it('should convert an entity to and from a table entity correctly', function(){
+        expect(_result).toEqual(_entity);
+    });
 });
