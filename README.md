@@ -75,9 +75,11 @@ In the above example ```entity``` is the object returned from Azure Table Storag
 ### API
 #### convertToTableEntity(entity, preserveKeys)
 * entity
-... The object to be converted.  Must contain an ```entityMapping``` key in the format described above.
+
+The object to be converted.  Must contain an ```entityMapping``` key in the format described above.
 * preserveKeys (optional, defaults to true)
-... Boolean flag to indicate whether the original values for the Partition and Row keys are retained.  E.g. if entityMapping.partitionKey = 'id' and preserveKeys is true the output will have a PartitionKey property and an id property.
+
+Boolean flag to indicate whether the original values for the Partition and Row keys are retained.  E.g. if entityMapping.partitionKey = 'id' and preserveKeys is true the output will have a PartitionKey property and an id property.
 
 #### convertFromTableEntity(source, mapping)
 * source
