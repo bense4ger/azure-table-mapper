@@ -83,9 +83,11 @@ Boolean flag to indicate whether the original values for the Partition and Row k
 
 #### convertFromTableEntity(source, mapping)
 * source
-... The object returned from Azure Table Storage
+
+The object returned from Azure Table Storage
 * mapping
-... The object that describes the destination object's mapping
+
+The object that describes the destination object's mapping
 
 ## Contributions and Issues
 Contributions are most welcome, and if you notice any issues then please raise them!
