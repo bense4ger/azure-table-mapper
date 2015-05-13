@@ -48,6 +48,33 @@ describe('helper.convertToTableEntity', function(){
     });
 });
 
+describe('helper.convertToTableEntity', function () {
+    var _entity, _tableEntity;
+    beforeAll(function(){
+        _entity = {
+            id : 1234,
+            name : 'test',
+            name2: 'test2',
+            date : new Date(2015, 0, 1),
+            bool : true,
+            object: {value : 'someValue'},
+            double: 123.45,
+            entityMapping: {
+                partitionKey : 'id',
+                rowKey : {
+                    identifier : ['name', 'name2'],
+                    format : '{name}_{name2}_rk'
+                }
+            }
+        };
+
+        _tableEntity = helper.convertToTableEntity(_entity);
+    });
+    it('should handle RowKeys with multiple source properties', function () {
+        expect(_tableEntity.RowKey._).toEqual('test_test2_rk');
+    });
+});
+
 describe('helper.convertToTableEntity - preserving keys' , function(){
     var _entity, _tableEntity;
     beforeAll(function(){
