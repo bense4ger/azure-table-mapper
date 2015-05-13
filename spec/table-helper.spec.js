@@ -127,6 +127,36 @@ describe('helper.convertToTableEntity - default preserving keys', function(){
     });
 });
 
+describe('helper.convertToTableEntity - default preserving keys with multiple properties', function(){
+    var _entity, _tableEntity;
+    beforeAll(function(){
+        _entity = {
+            id : 1234,
+            name : 'test',
+            name2 : 'test2',
+            date : new Date(2015, 0, 1),
+            entityMapping: {
+                partitionKey : 'id',
+                rowKey : {
+                    identifier : ['name', 'name2'],
+                    format : '{name}_{name2}_rk'
+                }
+            }
+        };
+
+        _tableEntity = helper.convertToTableEntity(_entity);
+    });
+    it('should keep the partiton key property on the table entity', function(){
+        expect(_tableEntity.id._).toEqual(1234);
+    });
+    it('should keep the first row key property on the table entity', function(){
+        expect(_tableEntity.name._).toEqual('test');
+    });
+    it('should keep the second row key property on the table entity', function(){
+        expect(_tableEntity.name2._).toEqual('test2');
+    });
+});
+
 describe('helper.convertToTableEntity - do not preserve keys', function(){
     var _entity, _tableEntity;
     beforeAll(function(){
@@ -148,8 +178,37 @@ describe('helper.convertToTableEntity - do not preserve keys', function(){
     it('should not preserve the original partition key property', function(){
         expect(_tableEntity[_entity.entityMapping.partitionKey]).toBeUndefined();
     });
-    it('should not preserve the original row key property(ies)', function(){
+    it('should not preserve the original row key property', function(){
         expect(_tableEntity[_entity.entityMapping.rowKey.identifier[0]]).toBeUndefined();
+    });
+});
+
+describe('helper.convertToTableEntity - do not preserve multiple keys', function(){
+    var _entity, _tableEntity;
+    beforeAll(function(){
+        _entity = {
+            id : 1234,
+            name : 'test',
+            name2: 'test2',
+            date : new Date(2015, 0, 1),
+            entityMapping: {
+                partitionKey : 'id',
+                rowKey : {
+                    identifier : ['name', 'name2'],
+                    format : '{name}_{name2}_rk'
+                }
+            }
+        };
+
+        _tableEntity = helper.convertToTableEntity(_entity, false);
+    });
+    it('should not preserve the original partition key property', function(){
+        expect(_tableEntity[_entity.entityMapping.partitionKey]).toBeUndefined();
+    });
+    it('should not preserve the original row key properties', function(){
+        _entity.entityMapping.rowKey.identifier.forEach(function (i) {
+            expect(_tableEntity[i]).toBeUndefined();
+        })
     });
 });
 
