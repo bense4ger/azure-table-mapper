@@ -12,6 +12,7 @@
   },
   "keywords": [
     "azure",
+    "storage",
     "table-storage",
     "mapping"
   ],
@@ -23,8 +24,11 @@
   "homepage": "https://github.com/bense4ger/azure-table-mapper",
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "gulp": "^3.9.0",
+    "gulp-jsdoc-to-markdown": "^1.1.1",
     "istanbul": "^0.3.13",
-    "jasmine": "^2.3.1"
+    "jasmine": "^2.3.1",
+    "jsdoc-to-markdown": "^1.1.1"
   },
   "dependencies": {
     "azure-storage": "^0.5.0"
