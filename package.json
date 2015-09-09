@@ -25,6 +25,7 @@
   "devDependencies": {
     "coveralls": "^2.11.2",
     "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
     "gulp-jsdoc-to-markdown": "^1.1.1",
     "istanbul": "^0.3.13",
     "jasmine": "^2.3.1",
