@@ -5,6 +5,17 @@ var formatter = require('../lib/formatter');
 
 describe('formatter.azurifyRowKey', function () {
     describe('transforming values to row keys', function () {
+        var actual, expected;
+        beforeAll(function () {
+            var single = {
+                identifier : '',
+                format : ''
+            };
+            var double = {
+                identifier : '',
+                format : ''
+            };
+        });
         it('should handle a single value', function () {
 
         });
